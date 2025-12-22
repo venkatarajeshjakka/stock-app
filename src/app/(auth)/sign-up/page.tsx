@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import {
   PREFERRED_INDUSTRIES,
   RISK_TOLERANCE_OPTIONS,
 } from "@/lib/constants";
+import { signUpwithEmail } from "@/lib/actions/auth.actions";
+import { toast } from "sonner";
 const SignUp = () => {
   const router = useRouter();
   const {
@@ -34,9 +36,19 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log(data);
+      console.log("Form Data:", data);
+      // sign-up api call
+      const result = await signUpwithEmail(data);
+
+      if (result.success) {
+        router.push("/");
+      }
     } catch (e) {
       console.error(e);
+      toast.error("Sign up failed. Please try again.", {
+        description:
+          e instanceof Error ? e.message : "Failed to create an account",
+      });
     }
   };
 
@@ -60,9 +72,11 @@ const SignUp = () => {
           register={register}
           error={errors.email}
           validation={{
-            required: "Email name is required",
-            pattern: /^\w+@\w+\.\w+$/,
-            message: "Email address is required",
+            required: "Email is required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Please enter a valid email address",
+            },
           }}
         />
 
