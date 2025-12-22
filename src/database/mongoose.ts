@@ -38,4 +38,6 @@ export const connectToDatabase = async () => {
   }
 
   console.log("MongoDB is connected");
+
+  return cached.conn;
 };
