@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/better-auth/auth";
 import { inngest } from "@/lib/inngest/client";
+import { headers } from "next/headers";
 
 export const signUpwithEmail = async ({
   email,
@@ -39,5 +40,31 @@ export const signUpwithEmail = async ({
   } catch (e) {
     console.error("Sign up error:", e);
     return { success: false, error: "Sign up failed" };
+  }
+};
+
+export const signInWithEmail = async ({ email, password }: SignInFormData) => {
+  try {
+    const response = await auth.api.signInEmail({
+      body: {
+        email,
+        password,
+      },
+    });
+
+    return { success: true, data: response };
+  } catch (e) {
+    console.error("Sign In error:", e);
+    return { success: false, error: "Sign In failed" };
+  }
+};
+
+export const signOut = async () => {
+  try {
+    await auth.api.signOut({ headers: await headers() });
+    return { success: true };
+  } catch (e) {
+    console.error("Sign out error:", e);
+    return { success: false, error: "Sign out failed" };
   }
 };
